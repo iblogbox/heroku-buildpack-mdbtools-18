@@ -14,9 +14,9 @@ CACHE_DIR=$2 # the contents of CACHE_DIR are persisted between builds
 if [ -f $BUILD_DIR/LibreOfficeAppImage ] ; then
     DOWNLOAD=$(grep http $BUILD_DIR/LibreOfficeAppImage | head -n 1)
 else
-    #DOWNLOAD="https://libreoffice.soluzioniopen.com/stable/standard/LibreOffice-fresh.standard-x86_64.AppImage"
-    #DOWNLOAD="https://libreoffice.soluzioniopen.com/stable/basic/LibreOffice-6.4.7-x86_64.AppImage"
-    DOWNLOAD="https://libreoffice.soluzioniopen.com/old/LibreOffice-6.0.6-x86_64.AppImage"
+    #DOWNLOAD="https://libreoffice.soluzioniopen.com/stable/standard/LibreOffice-fresh.standard-x86_64.AppImage" #321M
+    #DOWNLOAD="https://libreoffice.soluzioniopen.com/stable/basic/LibreOffice-6.4.7-x86_64.AppImage" #278M
+    DOWNLOAD="https://libreoffice.soluzioniopen.com/old/LibreOffice-6.0.6-x86_64.AppImage" #238M
 fi
 VERSION=$(echo $DOWNLOAD | grep -Poi "(?<=LibreOffice-)[^/]+(?=\.AppImage)")
 VERSION=${VERSION:-default} # avoid empty version if the grep fails to match
@@ -39,9 +39,16 @@ fi
 cp -R $CACHE_DIR/libreoffice-${VERSION}/usr $INSTALL_DIR
 cp -R $CACHE_DIR/libreoffice-${VERSION}/opt $INSTALL_DIR
 
+
 PROFILE_PATH="$BUILD_DIR/.profile.d/libreoffice.sh"
 ACTUAL_INSTALL_PATH="$HOME/vendor/libreoffice"
 mkdir -p $(dirname $PROFILE_PATH)
 INSTALLED_VERSION=$(ls $INSTALL_DIR/opt)
 echo "export PATH=$ACTUAL_INSTALL_PATH/opt/$INSTALLED_VERSION/program:\$PATH" >> $PROFILE_PATH
 echo "export OFFICE_PATH=$ACTUAL_INSTALL_PATH/opt/$INSTALLED_VERSION" >> $PROFILE_PATH
+
+#missing so files
+SOURCE_DIR="$(dirname $0)/../compiled"
+cp "$SOURCE_DIR/*" "$BUILD_DIR/.apt/usr/local/lib"
+echo "export LD_LIBRARY_PATH=\$HOME/.apt/usr/local/lib:\$LD_LIBRARY_PATH" >> $PROFILE_PATH
+
