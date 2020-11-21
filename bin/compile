@@ -49,6 +49,7 @@ echo "export OFFICE_PATH=$ACTUAL_INSTALL_PATH/opt/$INSTALLED_VERSION" >> $PROFIL
 
 #missing so files
 SOURCE_DIR="$(dirname $0)/../compiled"
-cp $SOURCE_DIR/* "$BUILD_DIR/.apt/usr/local/lib"
+mkdir -p $BUILD_DIR/.apt/usr/local/lib
+cp -r $SOURCE_DIR/* "$BUILD_DIR/.apt/usr/local/lib"
 echo "export LD_LIBRARY_PATH=\$HOME/.apt/usr/local/lib:\$LD_LIBRARY_PATH" >> $PROFILE_PATH
 
